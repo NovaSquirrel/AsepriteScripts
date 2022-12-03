@@ -3,6 +3,9 @@
 -- 
 -- Copying and distribution of this file, with or without modification, are permitted in any medium without royalty, provided the copyright notice and this notice are preserved. This file is offered as-is, without any warranty.
 
+-- This script looks at all of the tilemap layers in the current frame of an Aseprite sprite,
+-- then calculates how many unique 8x8 tiles there are on each layer, taking flips into account.
+
 local pc = app.pixelColor
 local sprite = app.activeSprite
 if not sprite then return app.alert("There is no active sprite") end
@@ -62,9 +65,6 @@ local function checkTilemap(layer)
 	local tileset = layer.tileset
 	local tileWidth = tileset.grid.tileSize.width
 	local tileHeight = tileset.grid.tileSize.height
-	local spec8x8 = sprite.spec
-	spec8x8.width = 8
-	spec8x8.height = 8
 	local used8x8Set = {}
 
 	-- Find all of the used tileset entries
@@ -82,7 +82,7 @@ local function checkTilemap(layer)
 		local fullImage = tileset:getTile(key)
 		for x=1,tileWidth/8 do
 			for y=1,tileHeight/8 do
-				local tileImage = Image(spec8x8)
+				local tileImage = Image(8, 8, fullImage.colorMode)
 				tileImage:clear()
 				tileImage:drawImage(fullImage, Point(-(x-1)*8, -(y-1)*8))
 
